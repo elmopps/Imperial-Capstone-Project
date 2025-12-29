@@ -1,0 +1,57 @@
+# Model Card: Hybrid Neuro-Evolutionary BBO Strategy
+
+## 1. Overview
+* **Model Name:** Hybrid Modular BBO Framework
+* **Version:** 10.0 (Final Capstone Iteration)
+* **Type:** Human-in-the-Loop, Model-Based Optimization
+* **Developer:** [Your Name]
+* **Frameworks:** PyTorch, scikit-learn, NumPy
+
+## 2. Intended Use
+**Primary Task:**
+Optimizing unknown "Black Box" functions where the gradient is unavailable and the cost of evaluation is high (limited to 1 query per batch).
+
+**Suitable Use Cases:**
+* High-dimensional parameter tuning (up to 8D).
+* Scenarios where "derivative-free" optimization is required.
+* Problems allowing for "batch" decision making (weeks/rounds).
+
+**Out-of-Scope Use Cases:**
+* Real-time control systems (inference latency is high due to manual review).
+* Convex optimization problems (standard solvers would be more efficient).
+* Massive-scale exploration (the strategy relies on "micro-steps" and manual tuning).
+
+## 3. Strategy Evolution & Details
+The optimization approach is a **dynamic portfolio strategy** that evolved over 10 rounds:
+
+| Phase | Rounds | Strategy Description | Key Techniques |
+| :--- | :--- | :--- | :--- |
+| **Exploration** | W1-W3 | **Bayesian Optimization:** Modeled uncertainty using Gaussian Processes to find initial areas of interest. | GP-UCB, SVM Classification |
+| **Pivot** | W4-W6 | **Deep Surrogate Modeling:** Fit Neural Networks to data points to estimate local gradients via backpropagation. | PyTorch MLPs, Gradient Ascent |
+| **Refinement** | W7-W9 | **Modular Framework:** Categorized functions into "Growth," "Recovery," and "Venture" assets. | Hyperparameter Tuning, Trust Regions |
+| **Final** | W10 | **Attention & exploitation:** Aggressive exploitation of high-performing functions using momentum-based vectors. | Self-Attention Heuristics |
+
+## 4. Performance Metrics (Week 9/10 Snapshot)
+Performance is measured by the **maximum $y$ value found**.
+
+* **Star Performer:** Function 5 ($y=40.97$) - Achieved via aggressive NN-guided gradient ascent.
+* **Strong Growth:** Function 2 ($y=0.621$) and Function 4 ($y=-2.28$) - Recent breakthroughs using momentum strategies.
+* **Challenges:** Function 1 ($y=2.67\text{e-}9$) and Function 8 ($y=9.63$) - Stagnation due to sparse signals or diminishing returns (plateaus).
+
+## 5. Assumptions and Limitations
+**Key Assumptions:**
+* **Local Smoothness:** We assume high-performing regions are locally convex, allowing for gradient-based extrapolation.
+* **Variable Independence:** For high-dimensional functions (F8), we often optimized subsets of coordinates, assuming weak interaction between distant features.
+
+**Limitations:**
+* **Overfitting:** With only 19 data points, surrogate models (especially NNs) are highly prone to overfitting noise.
+* **Cognitive Bottleneck:** The strategy relies on human intuition to set "step sizes," which introduces bias and is not scalable to >100 iterations.
+* **Path Dependency:** The strategy is heavily biased by the random seeds from Week 1. "Dark zones" of the search space remain completely unexplored.
+
+## 6. Ethical Considerations
+**Transparency:**
+This model card makes explicit the "human-in-the-loop" nature of the optimization. We acknowledge that the "Gradient Ascent" decisions were often manually tuned based on intuition, not just raw math.
+
+**Bias and Fairness:**
+* **Sampling Bias:** For Weeks 1-7, **Function 1** was largely ignored because it returned `0.0`. In a real-world context (e.g., hiring algorithms), ignoring a demographic due to "lack of signal" reinforces systemic bias.
+* **Safety:** The strategy pushes inputs to the extreme boundaries $[0, 1]$ to maximize scores. In physical systems, this lack of constraints could lead to dangerous instability (as seen in the Week 7 crash of Function 7).
