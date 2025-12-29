@@ -1,0 +1,57 @@
+# Datasheet for BBO Capstone Project Data Set
+
+## 1. Motivation
+**Why was this data set created?**
+This data set was generated as part of a Black Box Optimization (BBO) Capstone Project. The primary goal was to iteratively maximize the scalar output of eight unknown, noiseless functions over a period of 10 weeks.
+
+**Who created the data set?**
+The data set was created by [Your Name] as part of an advanced Machine Learning optimization challenge.
+
+**What task does it support?**
+The data supports the task of **resource-constrained optimization**. It serves as a benchmark for evaluating different search strategies (e.g., Bayesian Optimization, Gradient Ascent, Random Search) on high-dimensional, non-convex landscapes with extremely limited query budgets.
+
+## 2. Composition
+**What does the data set contain?**
+The data set consists of 19 rounds of query-response pairs for 8 distinct functions.
+* **Inputs ($X$):** Continuous vectors with dimensions ranging from 2D to 8D. Values are bounded in $[0, 1]$.
+* **Outputs ($y$):** Scalar float values representing the objective function score.
+
+**What is the size of the data set?**
+* Total Instances: ~152 (19 rounds × 8 functions).
+* Columns: Function ID, Input Vector (variable length), Output Value.
+
+**Are there any gaps or missing data?**
+There are no missing values. However, **Function 1** produced exact zeros ($0.0$) for the first 6 weeks, creating a "sparse signal" problem that significantly skewed early modeling attempts.
+
+## 3. Collection Process
+**How was the data collected?**
+Data was generated through a "Human-in-the-Loop" optimization process over 10 weeks.
+* **Query Generation:** Inputs were proposed using a hybrid strategy combining Bayesian Optimization (scikit-learn), Neural Network Gradient Ascent (PyTorch), and manual heuristics.
+* **Function Evaluation:** Proposed queries were submitted to the "Black Box" oracle, which returned the corresponding $y$ values.
+
+**What is the sampling strategy?**
+The sampling strategy evolved dynamically:
+* **Weeks 1-3:** Exploratory sampling (Latin Hypercube / UCB).
+* **Weeks 4-10:** Exploitative sampling (Gradient Ascent) biased towards high-performing regions, with occasional random perturbations for stagnant functions.
+
+## 4. Preprocessing and Uses
+**Was any preprocessing applied?**
+No. The input values stored are the exact raw values submitted to the oracle.
+
+**What are the intended uses?**
+* Benchmarking optimization algorithms.
+* Analyzing the "learning curve" of different surrogate models.
+* Studying the trade-offs between exploration and exploitation in small-data regimes.
+
+**What are the inappropriate uses?**
+This data set is specific to the 8 hidden functions of this challenge. It is **not** suitable for training general-purpose surrogate models that generalize to outside problems, due to the small sample size and specific nature of the fitness landscapes.
+
+## 5. Distribution and Maintenance
+**Where is the data set available?**
+The data is hosted on this GitHub repository in the `data/` directory.
+
+**Licensing & Terms of Use:**
+Distributed under the MIT License. Open for educational and research use.
+
+**Maintenance:**
+The data set is static as of Week 10 and will not be updated further.
